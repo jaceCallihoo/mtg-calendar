@@ -1,3 +1,4 @@
+import requests
 import json
 from bs4 import BeautifulSoup
 import argparse
@@ -51,25 +52,20 @@ def scrape_event_schedule(html_content):
     return {"eventSchedule": schedule_data}
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Scrape event schedule from an HTML file.')
-    parser.add_argument('input_file', type=str, nargs='?', default='article.html',
-                        help='The HTML file to scrape (default: article.html).')
-    parser.add_argument('output_file', type=str, nargs='?', default='output.json',
-                        help='The output JSON file (default: output.json).')
+    parser = argparse.ArgumentParser(description='Scrape event schedule from a URL.')
+    parser.add_argument('url', type=str, help='The URL of the article to scrape.')
     args = parser.parse_args()
 
     try:
-        with open(args.input_file, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-    except FileNotFoundError:
-        print(f"Error: Input file '{args.input_file}' not found.")
+        response = requests.get(args.url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching URL: {e}")
         exit(1)
 
-    scraped_data = scrape_event_schedule(html_content)
+    scraped_data = scrape_event_schedule(response.content)
 
     if scraped_data and scraped_data.get("eventSchedule"):
-        with open(args.output_file, 'w', encoding='utf-8') as f:
-            json.dump(scraped_data, f, indent=4, ensure_ascii=False)
-        print(f"Scraped data saved to '{args.output_file}'")
+        print(json.dumps(scraped_data, indent=4, ensure_ascii=False))
     else:
-        print("Could not find or scrape event schedule from the input file.")
+        print("Could not find or scrape event schedule from the URL.")

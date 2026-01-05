@@ -21,6 +21,5 @@ for article in articles:
         results.append({"title": title, "link": link})
 
 
-with open("articles.json", "w") as f:
-    json.dump(results, f, indent=2)
+print(json.dumps(results, indent=4, ensure_ascii=False))
 

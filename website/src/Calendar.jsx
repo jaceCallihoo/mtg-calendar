@@ -1,0 +1,92 @@
+import React, { useMemo } from 'react';
+
+const DAYS_OF_WEEK = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+const Calendar = ({ events }) => {
+  const { days, headers } = useMemo(() => {
+    const today = new Date();
+    // Calculate start date (previous Saturday)
+    const dayOfWeek = today.getDay(); // 0=Sun, 6=Sat
+    // We want 0=Sat, 1=Sun, ..., 6=Fri
+    // Current mapping: Sun(0)->1, Mon(1)->2, ..., Sat(6)->0
+    // Offset to subtract from today:
+    // Sat(6): 0
+    // Sun(0): 1
+    // Mon(1): 2
+    // ...
+    // Fri(5): 6
+    // Formula: (dayOfWeek + 1) % 7
+    const offset = (dayOfWeek + 1) % 7;
+    
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - offset);
+    startDate.setHours(0, 0, 0, 0);
+
+    const daysList = [];
+    for (let i = 0; i < 60; i++) {
+      const current = new Date(startDate);
+      current.setDate(startDate.getDate() + i);
+      daysList.push(current);
+    }
+
+    return { days: daysList, headers: DAYS_OF_WEEK };
+  }, []);
+
+  const getEventsForDay = (date) => {
+    return events.filter(event => {
+      const eventStart = new Date(event.startTime);
+      const eventEnd = new Date(event.endTime);
+      
+      // Check if the event overlaps with the day (00:00 to 23:59)
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      return eventStart <= dayEnd && eventEnd >= dayStart;
+    });
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <div className="p-4 bg-gray-900 min-h-screen text-white">
+      <div className="grid grid-cols-7 gap-2 mb-2">
+        {headers.map(day => (
+          <div key={day} className="text-center font-bold text-gray-400 py-2 border-b border-gray-700">
+            {day}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-2">
+        {days.map((day, index) => {
+            const dayEvents = getEventsForDay(day);
+            const isToday = new Date().toDateString() === day.toDateString();
+            
+            return (
+              <div 
+                key={index} 
+                className={`min-h-[120px] p-2 border border-gray-700 rounded bg-gray-800 ${isToday ? 'ring-2 ring-blue-500' : ''}`}
+              >
+                <div className={`text-sm mb-2 ${isToday ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
+                  {formatDate(day)}
+                </div>
+                <div className="space-y-1">
+                  {dayEvents.map((event, idx) => (
+                    <div key={idx} className="bg-blue-600 text-xs p-1 rounded text-white truncate" title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}>
+                      {event.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default Calendar;

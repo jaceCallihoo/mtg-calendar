@@ -17,13 +17,15 @@ const Calendar = ({ events }) => {
     // Fri(5): 6
     // Formula: (dayOfWeek + 1) % 7
     const offset = (dayOfWeek + 1) % 7;
-    
+
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - offset);
     startDate.setHours(0, 0, 0, 0);
 
     const daysList = [];
-    for (let i = 0; i < 60; i++) {
+    const daysInWeek = 7;
+    const numWeeks = 10;
+    for (let i = 0; i < numWeeks * daysInWeek; i++) {
       const current = new Date(startDate);
       current.setDate(startDate.getDate() + i);
       daysList.push(current);
@@ -36,11 +38,11 @@ const Calendar = ({ events }) => {
     return events.filter(event => {
       const eventStart = new Date(event.startTime);
       const eventEnd = new Date(event.endTime);
-      
+
       // Check if the event overlaps with the day (00:00 to 23:59)
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
-      
+
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
 
@@ -63,26 +65,26 @@ const Calendar = ({ events }) => {
       </div>
       <div className="grid grid-cols-7 gap-2">
         {days.map((day, index) => {
-            const dayEvents = getEventsForDay(day);
-            const isToday = new Date().toDateString() === day.toDateString();
-            
-            return (
-              <div 
-                key={index} 
-                className={`min-h-[120px] p-2 border border-gray-700 rounded bg-gray-800 ${isToday ? 'ring-2 ring-blue-500' : ''}`}
-              >
-                <div className={`text-sm mb-2 ${isToday ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
-                  {formatDate(day)}
-                </div>
-                <div className="space-y-1">
-                  {dayEvents.map((event, idx) => (
-                    <div key={idx} className="bg-blue-600 text-xs p-1 rounded text-white truncate" title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}>
-                      {event.name}
-                    </div>
-                  ))}
-                </div>
+          const dayEvents = getEventsForDay(day);
+          const isToday = new Date().toDateString() === day.toDateString();
+
+          return (
+            <div
+              key={index}
+              className={`min-h-[120px] p-2 border border-gray-700 rounded bg-gray-800 ${isToday ? 'ring-2 ring-blue-500' : ''}`}
+            >
+              <div className={`text-sm mb-2 ${isToday ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
+                {formatDate(day)}
               </div>
-            );
+              <div className="space-y-1">
+                {dayEvents.map((event, idx) => (
+                  <div key={idx} className="bg-blue-600 text-xs p-1 rounded text-white truncate" title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}>
+                    {event.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
         })}
       </div>
     </div>

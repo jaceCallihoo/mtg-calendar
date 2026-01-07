@@ -98,8 +98,14 @@ const Calendar = ({ events }) => {
                   {dayEvents.map((event, idx) => {
                     const colorClass = EVENT_COLORS[events.indexOf(event) % EVENT_COLORS.length];
                     return (
-                      <div key={idx} className={`${colorClass} text-xs p-1 rounded text-white truncate`} title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}>
-                        {event.name}
+                      <div 
+                        key={idx} 
+                        className={`${colorClass} text-[10px] sm:text-xs p-1 rounded text-white truncate font-bold shadow-sm border border-white/10`} 
+                        title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}
+                      >
+                        <div className="bg-black/20 w-full px-1 py-0.5 rounded-sm truncate">
+                          {event.name}
+                        </div>
                       </div>
                     );
                   })}

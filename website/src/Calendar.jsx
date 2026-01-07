@@ -2,6 +2,24 @@ import React, { useMemo } from 'react';
 
 const DAYS_OF_WEEK = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
+const EVENT_COLORS = [
+  'bg-blue-600',
+  'bg-indigo-600',
+  'bg-violet-600',
+  'bg-purple-600',
+  'bg-pink-600',
+  'bg-red-600',
+  'bg-orange-600',
+  'bg-amber-600',
+  'bg-yellow-600',
+  'bg-lime-600',
+  'bg-green-600',
+  'bg-emerald-600',
+  'bg-teal-600',
+  'bg-cyan-600',
+  'bg-sky-600',
+];
+
 const Calendar = ({ events }) => {
   const { days, headers } = useMemo(() => {
     const today = new Date();
@@ -17,7 +35,7 @@ const Calendar = ({ events }) => {
     // Fri(5): 6
     // Formula: (dayOfWeek + 1) % 7
     const offset = (dayOfWeek + 1) % 7;
-
+    
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - offset);
     startDate.setHours(0, 0, 0, 0);
@@ -38,11 +56,11 @@ const Calendar = ({ events }) => {
     return events.filter(event => {
       const eventStart = new Date(event.startTime);
       const eventEnd = new Date(event.endTime);
-
+      
       // Check if the event overlaps with the day (00:00 to 23:59)
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
-
+      
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
 
@@ -65,26 +83,29 @@ const Calendar = ({ events }) => {
       </div>
       <div className="grid grid-cols-7 gap-2">
         {days.map((day, index) => {
-          const dayEvents = getEventsForDay(day);
-          const isToday = new Date().toDateString() === day.toDateString();
-
-          return (
-            <div
-              key={index}
-              className={`min-h-[120px] p-2 border border-gray-700 rounded bg-gray-800 ${isToday ? 'ring-2 ring-blue-500' : ''}`}
-            >
-              <div className={`text-sm mb-2 ${isToday ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
-                {formatDate(day)}
+            const dayEvents = getEventsForDay(day);
+            const isToday = new Date().toDateString() === day.toDateString();
+            
+            return (
+              <div 
+                key={index} 
+                className={`min-h-[120px] p-2 border border-gray-700 rounded bg-gray-800 ${isToday ? 'ring-2 ring-blue-500' : ''}`}
+              >
+                <div className={`text-sm mb-2 ${isToday ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
+                  {formatDate(day)}
+                </div>
+                <div className="space-y-1">
+                  {dayEvents.map((event, idx) => {
+                    const colorClass = EVENT_COLORS[events.indexOf(event) % EVENT_COLORS.length];
+                    return (
+                      <div key={idx} className={`${colorClass} text-xs p-1 rounded text-white truncate`} title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}>
+                        {event.name}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="space-y-1">
-                {dayEvents.map((event, idx) => (
-                  <div key={idx} className="bg-blue-600 text-xs p-1 rounded text-white truncate" title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}>
-                    {event.name}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
+            );
         })}
       </div>
     </div>

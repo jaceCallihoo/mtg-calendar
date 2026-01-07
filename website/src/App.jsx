@@ -10,6 +10,26 @@ function App() {
       endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
     },
     {
+      name: "Weekly Meeting 2",
+      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
+      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
+    },
+    {
+      name: "Weekly Meeting 3",
+      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
+      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
+    },
+    {
+      name: "Weekly Meeting 4",
+      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
+      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
+    },
+    {
+      name: "Weekly Meeting 5",
+      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
+      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
+    },
+    {
       name: "Project Deadline",
       startTime: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString(), // 3 days from now
       endTime: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString()

@@ -1,50 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Calendar from './Calendar'
 
 function App() {
-  // Sample events
-  const [events] = useState([
-    {
-      name: "Weekly Meeting",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
-      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
-    },
-    {
-      name: "Weekly Meeting 2",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
-      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
-    },
-    {
-      name: "Weekly Meeting 3",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
-      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
-    },
-    {
-      name: "Weekly Meeting 4",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
-      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
-    },
-    {
-      name: "Weekly Meeting 5",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // Tomorrow
-      endTime: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()
-    },
-    {
-      name: "Project Deadline",
-      startTime: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString(), // 3 days from now
-      endTime: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString()
-    },
-    {
-      name: "Long Event",
-      startTime: new Date().toISOString(),
-      endTime: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString() // Spans 2 days
-    },
-    {
-      name: "Past Event",
-      startTime: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
-      endTime: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString()
-    }
-  ]);
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/events')
+      .then(response => response.json())
+      .then(data => setEvents(data))
+      .catch(error => console.error('Error fetching events:', error));
+  }, []);
 
   return (
     <div className="w-full">

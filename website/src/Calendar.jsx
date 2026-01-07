@@ -53,10 +53,22 @@ const Calendar = ({ events }) => {
   }, []);
 
   const getEventsForDay = (date) => {
+    const parseDate = (dateStr) => {
+      if (!dateStr) return null;
+      // Handle YYYY-MM-DD string as local date to avoid timezone offsets
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d);
+      }
+      return new Date(dateStr);
+    };
+
     return events.filter(event => {
-      const eventStart = new Date(event.startTime);
-      const eventEnd = new Date(event.endTime);
+      const eventStart = parseDate(event.startDate || event.startTime);
+      const eventEnd = parseDate(event.endDate || event.endTime);
       
+      if (!eventStart || !eventEnd) return false;
+
       // Check if the event overlaps with the day (00:00 to 23:59)
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
@@ -101,7 +113,7 @@ const Calendar = ({ events }) => {
                       <div 
                         key={idx} 
                         className={`${colorClass} text-[10px] sm:text-xs p-1 rounded text-white truncate font-bold shadow-sm border border-white/10`} 
-                        title={`${event.name} (${new Date(event.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`}
+                        title={event.name}
                       >
                         <div className="bg-black/20 w-full px-1 py-0.5 rounded-sm truncate">
                           {event.name}
